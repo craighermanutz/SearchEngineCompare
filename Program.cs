@@ -13,11 +13,12 @@ namespace SearchCompare
 public class NewOne : Driver
 
 {
-    public List<string> Gsearch { get; set; }
-    public List<string> Bsearch { get; set; }
-    public List<string> Dsearch { get; set; }
+    public IEnumerable<string> Gsearch { get; set; }
+    public IEnumerable<string> Bsearch { get; set; }
+    public IEnumerable<string> Dsearch { get; set; }
     public string Parameter { get; set; }
-}
+    public int SearchCalcValue { get; set; }
+    }
 
 public class Program : Driver
 {
@@ -32,7 +33,8 @@ public class Program : Driver
                 Gsearch = null,
                 Bsearch = null,
                 Dsearch = null,
-                Parameter = userresponse
+                Parameter = userresponse,
+                SearchCalcValue = 1
             };
 
             Thread thread1 = new Thread(Search1);
@@ -51,15 +53,44 @@ public class Program : Driver
             Console.WriteLine(Results.Gsearch);
             Console.WriteLine(Results.Bsearch);
 
-            string[] Test = new string[300];    // makes sure that chosen string list contains desired information 
-            List<string> Test2 = Results.Dsearch;
+            CompareCalc(Results.Gsearch, Results.Bsearch, Results.Dsearch);           
+            Console.WriteLine("The realatedness of your search is" + CompareCalc);
+
+            string[] Test = new string[300];              // currently used to check if string lists are populated
+            IEnumerable<string> Test2 = Results.Gsearch;
             int i = 1;
             foreach(string element in Test2)
             {
                 Test[i] = element;
-                Console.WriteLine(element);
+                Console.WriteLine("heres duck" + element);
                 i++;
             }
+
+            string[] Test3 = new string[300];
+            IEnumerable<string> Test4 = Results.Gsearch;
+            int j = 1;
+            foreach (string element in Test4)
+            {
+                Test[j] = element;
+                Console.WriteLine("heres google" + element);
+                j++;
+            }
+
+            string[] Test5 = new string[300];
+            IEnumerable<string> Test6 = Results.Gsearch;
+            int r = 1;
+            foreach (string element in Test6)
+            {
+                Test[r] = element;
+                Console.WriteLine("heres bing" + element);
+                r++;
+            }
+        }
+
+        public static int CompareCalc(IEnumerable<string> searchg, IEnumerable<string> searchb, IEnumerable<string> searchd)
+        {
+
+            return CompareValue; // just for reference
 
         }
 
@@ -75,9 +106,12 @@ public class Program : Driver
 
             List<string> ElemList = new List<string>(driver1.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text).ToList());
 
-            Results.Gsearch = ElemList;
+            IEnumerable<string> RefinedElemlist = from e in ElemList
+                                                  where e.Contains("https")
+                                                  select e;
+            Results.Gsearch = RefinedElemlist;
         }
-
+         
         public static void Search2(object input)
 
         {
@@ -89,9 +123,12 @@ public class Program : Driver
 
             driver2.Instance.FindElement(By.Id("sb_form_q")).SendKeys(Results.Parameter + Keys.Enter);
 
-            //List<string> ElemList = new List<string>(driver2.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text));
+            List<string> ElemList = new List<string>(driver2.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text));
 
-            //Results.Bsearch = ElemList;
+            IEnumerable<string> RefinedElemlist = from e in ElemList
+                                                  where e.Contains("http")
+                                                  select e;
+            Results.Bsearch = RefinedElemlist;
         }
 
         public static void Search3(object input)
@@ -106,7 +143,10 @@ public class Program : Driver
 
             List<string> ElemList = new List<string>(driver3.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text));
 
-            Results.Dsearch = ElemList;
+            IEnumerable<string> RefinedElemlist = from e in ElemList
+                                                  where e.Contains("http")
+                                                  select e;
+            Results.Dsearch = RefinedElemlist;
         }
     }
 }
