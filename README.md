@@ -1,3 +1,3 @@
 # SearchEngineCompare
-Initial commit of a Selenium based search engine comparison tool. Takes in a search topic and compares top results across Google, Bing, and duckduckgo.
+The beginning of a console app that compares the relatedness of a search parameter across google, duckduckgo, and bing. Browser automation done with Selenium and threaded for faster analysis. 
 
