@@ -13,10 +13,10 @@ namespace SearchCompare
 public class NewOne : Driver
 
 {
-    public IEnumerable<string> Gsearch { get; set; }
-    public IEnumerable<string> Bsearch { get; set; }
-    public IEnumerable<string> Dsearch { get; set; }
-    public string Parameter { get; set; }
+    public IEnumerable<string> Gsearch { get; set; } //google search results
+    public IEnumerable<string> Bsearch { get; set; } // bing search results   
+    public IEnumerable<string> Dsearch { get; set; } // duckduckgo search results
+    public string SearchParameter { get; set; }      // what will be searhed for across the engines
     public int SearchCalcValue { get; set; }
     }
 
@@ -24,7 +24,7 @@ public class Program : Driver
 {
     static void Main(string[] args)
     {
-            Console.WriteLine("What searches would you like to compare?");
+            Console.WriteLine("What searches would you like to compare?"); 
             string userresponse = Console.ReadLine();
             userresponse = Convert.ToString(userresponse);
 
@@ -33,7 +33,7 @@ public class Program : Driver
                 Gsearch = null,
                 Bsearch = null,
                 Dsearch = null,
-                Parameter = userresponse,
+                SearchParameter = userresponse,
                 SearchCalcValue = 1
             };
 
@@ -53,8 +53,8 @@ public class Program : Driver
             Console.WriteLine(Results.Gsearch);
             Console.WriteLine(Results.Bsearch);
 
-            CompareCalc(Results.Gsearch, Results.Bsearch, Results.Dsearch);           
-            Console.WriteLine("The realatedness of your search is" + CompareCalc);
+            //CompareCalc(Results.Gsearch, Results.Bsearch, Results.Dsearch);           // will soon return a number correlating to 
+            //Console.WriteLine("The realatedness of your search is" + CompareCalc);    // comparedness once the method is done
 
             string[] Test = new string[300];              // currently used to check if string lists are populated
             IEnumerable<string> Test2 = Results.Gsearch;
@@ -66,7 +66,7 @@ public class Program : Driver
                 i++;
             }
 
-            string[] Test3 = new string[300];
+            string[] Test3 = new string[300];           // currently used to check if string lists are populated
             IEnumerable<string> Test4 = Results.Gsearch;
             int j = 1;
             foreach (string element in Test4)
@@ -76,7 +76,7 @@ public class Program : Driver
                 j++;
             }
 
-            string[] Test5 = new string[300];
+            string[] Test5 = new string[300];           // currently used to check if string lists are populated
             IEnumerable<string> Test6 = Results.Gsearch;
             int r = 1;
             foreach (string element in Test6)
@@ -90,7 +90,8 @@ public class Program : Driver
         public static int CompareCalc(IEnumerable<string> searchg, IEnumerable<string> searchb, IEnumerable<string> searchd)
         {
 
-            return CompareValue; // just for reference
+            return CompareValue; // this method will take in the search results of all 3 engines, with urls weeded out, and return a value
+                                 // where 1 means all the string collections are identical and 0 is no relatedness.
 
         }
 
@@ -102,13 +103,13 @@ public class Program : Driver
             driver1.Initialize();
             driver1.Instance.Navigate().GoToUrl("http://www.google.com");
 
-            driver1.Instance.FindElement(By.Name("q")).SendKeys(Results.Parameter + Keys.Enter);
+            driver1.Instance.FindElement(By.Name("q")).SendKeys(Results.SearchParameter + Keys.Enter);
 
             List<string> ElemList = new List<string>(driver1.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text).ToList());
 
             IEnumerable<string> RefinedElemlist = from e in ElemList
                                                   where e.Contains("https")
-                                                  select e;
+                                                  select e;     
             Results.Gsearch = RefinedElemlist;
         }
          
@@ -121,7 +122,7 @@ public class Program : Driver
             driver2.Initialize();
             driver2.Instance.Navigate().GoToUrl("http://www.bing.com");
 
-            driver2.Instance.FindElement(By.Id("sb_form_q")).SendKeys(Results.Parameter + Keys.Enter);
+            driver2.Instance.FindElement(By.Id("sb_form_q")).SendKeys(Results.SearchParameter + Keys.Enter);
 
             List<string> ElemList = new List<string>(driver2.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text));
 
@@ -139,7 +140,7 @@ public class Program : Driver
             driver3.Initialize();
             driver3.Instance.Navigate().GoToUrl("http://www.duckduckgo.com");
 
-            driver3.Instance.FindElement(By.Id("search_form_input_homepage")).SendKeys(Results.Parameter + Keys.Enter);
+            driver3.Instance.FindElement(By.Id("search_form_input_homepage")).SendKeys(Results.SearchParameter + Keys.Enter);
 
             List<string> ElemList = new List<string>(driver3.Instance.FindElements(By.XPath("//a[@href]")).Select(iw => iw.Text));
 
